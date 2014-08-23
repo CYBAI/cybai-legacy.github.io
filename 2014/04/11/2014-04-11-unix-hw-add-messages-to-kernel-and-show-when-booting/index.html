@@ -8,7 +8,7 @@
   <meta name="description" content="這是 Unix 作業2、需要加訊息至kernel並在開機時顯示自己的學號。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Unix HW] Add messages to kernel and show when booting">
-<meta property="og:url" content="http://yoursite.com/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/">
+<meta property="og:url" content="http://cybai.github.io/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/">
 <meta property="og:site_name" content="CYB's memo blog">
 <meta property="og:description" content="這是 Unix 作業2、需要加訊息至kernel並在開機時顯示自己的學號。">
 <meta property="og:image" content="/images/post-images/Unix-homework/1.png">
@@ -69,7 +69,7 @@
         <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://cybai.github.io"></form>
       </div>
     </div>
   </div>
@@ -82,7 +82,7 @@
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/unix-kernel-boot-message/">unix kernel boot-message</a>
+    <a class="article-category-link" href="/categories/unix/">unix</a>►<a class="article-category-link" href="/categories/unix/kernel/">kernel</a>►<a class="article-category-link" href="/categories/unix/kernel/boot-message/">boot-message</a>
   </div>
 
   </div>
@@ -107,40 +107,40 @@
 <p>我使用的環境是 <code>Ubuntu 64-bit</code>、依照以下步驟就可以完成了。</p>
 <h2 id="首先先介紹_Compile_Kernel_的部分"><strong>首先先介紹 Compile Kernel 的部分</strong></h2>
 <ul>
-<li>首先必須至<code>kernel.org</code>下載kernel(個人建議選擇比自己所安裝版本新的kernel)<br>  <img src="/images/post-images/Unix-homework/1.png" title="kernel.org"></li>
-<li>下載後解壓縮、並放至<code>/usr/src</code>底下(個人習慣，和其他kernel一併放在一起)<br>  <img src="/images/post-images/Unix-homework/2.png" title="kernel folder"></li>
+<li>首先必須至<code>kernel.org</code>下載kernel(個人建議選擇比自己所安裝版本新的kernel)<br>  <img src="/images/post-images/Unix-homework/1.png" alt="kernel.org"></li>
+<li>下載後解壓縮、並放至<code>/usr/src</code>底下(個人習慣，和其他kernel一併放在一起)<br>  <img src="/images/post-images/Unix-homework/2.png" alt="kernel folder"></li>
 <li><p>再來需要設定檔、所以需要 make config、我總共試了三種、分別為 <code>make config</code>, <code>make menuconfig</code>, 和 <code>make oldconfig</code>。</p>
 <ul>
 <li><p><em>make config</em> : 完全不推這個選項、除非需要仔細的去設定這個 kernel、否則他將會列出所有設定檔裡的選項、我只試過一次、按了整整兩分鐘的 Enter。</p>
 </li>
-<li><p><em>make menuconfig</em> : 會有像 BIOS 的畫面能夠選擇設定檔來操作、其中有可能會遇到需要裝 <code>ncurses</code><br> <img src="/images/post-images/Unix-homework/4.png" title="ncurses"></p>
-<p> 安裝指令如下:<br> <img src="/images/post-images/Unix-homework/5.png" title="install ncurses"></p>
-<p> 安裝後即可叫出 menuconfig<br> <img src="/images/post-images/Unix-homework/7.png" title="menuconfig"></p>
+<li><p><em>make menuconfig</em> : 會有像 BIOS 的畫面能夠選擇設定檔來操作、其中有可能會遇到需要裝 <code>ncurses</code><br> <img src="/images/post-images/Unix-homework/4.png" alt="ncurses"></p>
+<p> 安裝指令如下:<br> <img src="/images/post-images/Unix-homework/5.png" alt="install ncurses"></p>
+<p> 安裝後即可叫出 menuconfig<br> <img src="/images/post-images/Unix-homework/7.png" alt="menuconfig"></p>
 </li>
-<li><p><em>make oldconfig</em> : 既有的設定會直接讀取舊有的、如果下載較新版本的 kernel 通常會有新的設定、再選取預設的選項即可。<br> <img src="/images/post-images/Unix-homework/3.png" title="oldconfig"></p>
+<li><p><em>make oldconfig</em> : 既有的設定會直接讀取舊有的、如果下載較新版本的 kernel 通常會有新的設定、再選取預設的選項即可。<br> <img src="/images/post-images/Unix-homework/3.png" alt="oldconfig"></p>
 </li>
 </ul>
 </li>
-<li><p>做好 config 後就可以開始 <strong>compile kernel</strong> 了、我 compile 的方式會透過 <code>kernel-package</code>、所以必須安裝、否則會跳出錯誤訊息 (如下圖)<br>  <img src="/images/post-images/Unix-homework/8.png" title="kernel-package"></p>
+<li><p>做好 config 後就可以開始 <strong>compile kernel</strong> 了、我 compile 的方式會透過 <code>kernel-package</code>、所以必須安裝、否則會跳出錯誤訊息 (如下圖)<br>  <img src="/images/post-images/Unix-homework/8.png" alt="kernel-package"></p>
 <p>  裝好後就可以 compile 了、指令如下 :  </p>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">make-kpkg clean <span class="comment"># 表示將上一次 compile 的東西給 clean 掉</span></div><div class="line">fakeroot make-kpkg --initrd kernel_image kernel_headers</div></pre></td></tr></table></figure>
 
-<p>第二行就是 compile 的指令、他表示分別會做出 kernel_image 及 kernel_headers 兩個 [initrd][initrdwiki]、此外、可以加入 <code>-j 2</code> 參數、這代表將以 <strong>雙核心</strong> 來 compile。開始 compile 後就可以先去做自己的事了、我在第一次 compile 的時候沒有加 <code>-j</code> 大約跑了三至四個小時、後來加了 <code>-j 2</code> 減少了一半的時間 !<br>(Compile 過程圖)<br><img src="/images/post-images/Unix-homework/9.png" title="comiple progress"><br><img src="/images/post-images/Unix-homework/10.png" title="compile progress"></p>
+<p>第二行就是 compile 的指令、他表示分別會做出 kernel_image 及 kernel_headers 兩個 [initrd][initrdwiki]、此外、可以加入 <code>-j 2</code> 參數、這代表將以 <strong>雙核心</strong> 來 compile。開始 compile 後就可以先去做自己的事了、我在第一次 compile 的時候沒有加 <code>-j</code> 大約跑了三至四個小時、後來加了 <code>-j 2</code> 減少了一半的時間 !<br>(Compile 過程圖)<br><img src="/images/post-images/Unix-homework/9.png" alt="comiple progress"><br><img src="/images/post-images/Unix-homework/10.png" alt="comiple progress"></p>
 <ul>
-<li>經過漫長等待後、Compile成功的話能夠在<code>/usr/src</code>底下看到生成的initrd<br><img src="/images/post-images/Unix-homework/12.png" title="deb files"></li>
+<li>經過漫長等待後、Compile成功的話能夠在<code>/usr/src</code>底下看到生成的initrd<br><img src="/images/post-images/Unix-homework/12.png" alt="deb files"></li>
 <li>再來就是安裝剛剛compile好的kernel、指令如下 :  </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">sudo</span> dpkg –i linux-image-<span class="number">3.13</span>.<span class="number">8</span>_3.<span class="number">13.8</span>-<span class="number">10.00</span>.Custom_amd64.deb</div><div class="line"><span class="built_in">sudo</span> dpkg -i linux-headers-<span class="number">3.13</span>.<span class="number">8</span>_3.<span class="number">13.8</span>-<span class="number">10.00</span>.Custom_ amd64.deb</div></pre></td></tr></table></figure>
 
-<p>安裝完成後重新開機時若進入grub就可以看到剛剛所安裝的kernel。<br><img src="/images/post-images/Unix-homework/13.png" title="grub"></p>
+<p>安裝完成後重新開機時若進入grub就可以看到剛剛所安裝的kernel。<br><img src="/images/post-images/Unix-homework/13.png" alt="grub"></p>
 <ul>
 <li><p>選擇進入所安裝的 kernel 後由於開機畫面跑太快所以我透過 <code>grep</code> 指令來 search string</p>
 <blockquote>
 <p>指令為 : <code>grep &quot;991524&quot; /var/log/dmesg</code><br>dmesg 為開機時所跑的所有訊息、亦可使用 <code>dmesg | less</code> 來一一檢視</p>
 </blockquote>
-<p>  <img src="/images/post-images/Unix-homework/11.png" title="messages"></p>
+<p>  <img src="/images/post-images/Unix-homework/11.png" alt="messages"></p>
 </li>
 </ul>
 <p>以上就是整個 Compile 的過程、再來有兩個重要的部分、一個是 <code>要印訊息加在哪</code> 另一個是 <code>如果無法進到自己新裝的 kernel 怎麼辦</code>。</p>
@@ -149,7 +149,7 @@
 <blockquote>
 <p>查了很久的資料後、找到kernel在跑時有個主要的檔案、在<code>init/main.c</code>、將要顯示的訊息加在這個檔案的 <code>start_kernel</code> function 裡、我個人是加在 <em>Kernel command line</em> 之後。  </p>
 </blockquote>
-<p> <img src="/images/post-images/Unix-homework/16.png" title="init/main.c"></p>
+<p> <img src="/images/post-images/Unix-homework/16.png" alt="init/main.c"></p>
 <blockquote>
 <p>如果加入後並且 Compile 成功卻沒有顯示訊息的話、可能是 <code>printk</code> 的 log level 的問題、修改他就可以顯示了。  </p>
 </blockquote>
@@ -159,8 +159,8 @@
 
 <ol>
 <li><p><em>如果無法進到自己新裝的 kernel 怎麼辦</em><br> 這是因為 default 的 kernel 還是原先所裝的那個、必須進入 grub 選擇新裝的才可以。</p>
-<p> 所以必須<br> <img src="/images/post-images/Unix-homework/15.png" title="vim grub"></p>
-<p> 將顯示如下圖所示的檔案<br> <img src="/images/post-images/Unix-homework/14.png" title="grub"></p>
+<p> 所以必須<br> <img src="/images/post-images/Unix-homework/15.png" alt="vim grub"></p>
+<p> 將顯示如下圖所示的檔案<br> <img src="/images/post-images/Unix-homework/14.png" alt="grub"></p>
 <p> 將 <code>GRUB_HIDDEN_TIMEOUT</code> 改為 10 (代表開機時倒數秒數)、還有將 <code>GRUB_CMDLINE_LINUX_DEFAULT</code> 改為 false。然後重新開機時、<strong>在倒數10秒時按住右邊shift</strong> 就可以進入 grub 了。</p>
 </li>
 </ol>
@@ -180,9 +180,9 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/" data-id="f3snegm75c1m2lgj" class="article-share-link">Share</a>
+      <a data-url="http://cybai.github.io/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/" data-id="f3snegm75c1m2lgj" class="article-share-link">Share</a>
       
-        <a href="http://yoursite.com/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://cybai.github.io/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/#disqus_thread" class="article-comment-link">Comments</a>
       
       
     </footer>
@@ -225,7 +225,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AngularJS-Promise/">AngularJS Promise</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Javascript/">Javascript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/svn-ubuntu/">svn ubuntu</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unix-kernel-boot-message/">unix kernel boot-message</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AngularJS/">AngularJS</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/AngularJS/Promise/">Promise</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Javascript/">Javascript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/svn/">svn</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/svn/ubuntu/">ubuntu</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/unix/">unix</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/unix/kernel/">kernel</a><span class="category-list-count">1</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/unix/kernel/boot-message/">boot-message</a><span class="category-list-count">1</span></li></ul></li></ul></li></ul>
     </div>
   </div>
 
@@ -294,7 +294,7 @@
 <script>
   var disqus_shortname = 'cybai';
   
-  var disqus_url = 'http://yoursite.com/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/';
+  var disqus_url = 'http://cybai.github.io/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/';
   
   (function(){
     var dsq = document.createElement('script');
