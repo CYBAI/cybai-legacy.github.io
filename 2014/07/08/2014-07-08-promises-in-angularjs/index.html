@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Promises in AngularJS, Explained as a Cartoon(翻譯) | CYB&#39;s memo blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="有天早上，爸爸跟兒子：「兒子啊，去預測天氣看看！」
+每個星期天早上，爸爸都會叫兒子帶著他的超強望遠鏡到較高的山丘上去預測下午天氣如何。兒子答應(promise)爸爸他會去預測天氣。他在離開門前創造了一個 承諾(promise)。
+此時，爸爸決定若是好天氣，明天將準備去釣個魚。若是壞天氣則不去。還有，若兒子沒有預測天氣的話，他們也將留在家裡。
+大約三十分鐘左右後，兒子回來了。每周每周都發生著不一樣的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Promises in AngularJS, Explained as a Cartoon(翻譯)">
+<meta property="og:url" content="http://yoursite.com/2014/07/08/2014-07-08-promises-in-angularjs/">
+<meta property="og:site_name" content="CYB's memo blog">
+<meta property="og:description" content="有天早上，爸爸跟兒子：「兒子啊，去預測天氣看看！」
+每個星期天早上，爸爸都會叫兒子帶著他的超強望遠鏡到較高的山丘上去預測下午天氣如何。兒子答應(promise)爸爸他會去預測天氣。他在離開門前創造了一個 承諾(promise)。
+此時，爸爸決定若是好天氣，明天將準備去釣個魚。若是壞天氣則不去。還有，若兒子沒有預測天氣的話，他們也將留在家裡。
+大約三十分鐘左右後，兒子回來了。每周每周都發生著不一樣的">
+<meta property="og:image" content="http://andyshora.com/assets/img/pages/promise1.png">
+<meta property="og:image" content="http://andyshora.com/assets/img/pages/promise3.png">
+<meta property="og:image" content="http://andyshora.com/assets/img/pages/promise2.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Promises in AngularJS, Explained as a Cartoon(翻譯)">
+<meta name="twitter:description" content="有天早上，爸爸跟兒子：「兒子啊，去預測天氣看看！」
+每個星期天早上，爸爸都會叫兒子帶著他的超強望遠鏡到較高的山丘上去預測下午天氣如何。兒子答應(promise)爸爸他會去預測天氣。他在離開門前創造了一個 承諾(promise)。
+此時，爸爸決定若是好天氣，明天將準備去釣個魚。若是壞天氣則不去。還有，若兒子沒有預測天氣的話，他們也將留在家裡。
+大約三十分鐘左右後，兒子回來了。每周每周都發生著不一樣的">
+
+  
+    <link rel="alternative" href="/atom.xml" title="CYB&#39;s memo blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CYB&#39;s memo blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-2014-07-08-promises-in-angularjs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/08/2014-07-08-promises-in-angularjs/" class="article-date">
+  <time datetime="2014-07-08T12:58:51.000Z" itemprop="datePublished">Jul 8 2014</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/AngularJS-Promise/">AngularJS Promise</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Promises in AngularJS, Explained as a Cartoon(翻譯)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="有天早上，爸爸跟兒子：「兒子啊，去預測天氣看看！」">有天早上，爸爸跟兒子：「兒子啊，去預測天氣看看！」</h2>
+<p>每個星期天早上，爸爸都會叫兒子帶著他的超強望遠鏡到較高的山丘上去預測下午天氣如何。兒子答應(<strong>promise</strong>)爸爸他會去預測天氣。他在離開門前創造了一個 承諾(<strong>promise</strong>)。</p>
+<p>此時，爸爸決定若是好天氣，明天將準備去釣個魚。若是壞天氣則不去。還有，若兒子沒有預測天氣的話，他們也將留在家裡。</p>
+<p>大約三十分鐘左右後，兒子回來了。每周每周都發生著不一樣的結果：</p>
+<a id="more"></a>
+
+<h2 id="結果A)_成功預測天氣！是晴天_:-)">結果A) 成功預測天氣！是晴天 :-)</h2>
+<p>兒子成功的預測天氣，是<strong>晴朗的天氣且太陽很大!</strong> <strong><font color="#005c00">承諾被實現了</font></strong>(兒子遵守承諾)然後爸爸決定打包行李準備星期天去釣魚。</p>
+<p><img src="http://andyshora.com/assets/img/pages/promise1.png" alt=""></p>
+<p>結果B) 成功預測天氣！多雲且雨天 :-(</p>
+<p>兒子成功的預測天氣，但似乎是<strong>多雲且有雨的天氣</strong>。 <strong><font color="#005c00">承諾被實現了</font></strong>但由於壞天氣爸爸決定待在家裡。</p>
+<p><img src="http://andyshora.com/assets/img/pages/promise3.png" alt=""></p>
+<p>結果C) 沒能預測天氣 :-/</p>
+<p><strong>有問題</strong>造成兒子預測天氣失敗; 由於太霧導致看不到將會是甚麼天氣。兒子在離開時所做的承諾無法達成 - <strong><font color="#920000">承諾被拒絕!</font></strong> 爸爸決定待在家裡，不值得出門冒險。</p>
+<p><img src="http://andyshora.com/assets/img/pages/promise2.png" alt=""></p>
+<hr>
+
+<h2 id="這在程式碼裡長怎麼樣?">這在程式碼裡長怎麼樣?</h2>
+<p>爸爸在控制(controll)這個情況的邏輯，然後他處理他兒子猶如在處理一個服務(Service)。</p>
+<p>我們已經陳述這個邏輯，爸爸要求兒子去預測天氣，當兒子沒辦法立刻告訴他結果時，爸爸將會在等待時去做其他事，所以兒子答應(<strong>promise</strong>)他將會回報天氣為何。若爸爸得到天氣預報，他不是打包行李準備釣魚去，就是待在家裡。重點在這，兒子爬上山丘這件事並不會’<strong>阻撓</strong>‘爸爸做任何事，所以這就是為什麼創造<strong>承諾(promise)</strong>很棒，承諾可在之後被解決(實現或拒絕)。</p>
+<p>利用Angular的then function，我們可以指定爸爸對於每個結果做甚麼事。then function 可以接受兩個參數: 一個是在承諾實現時執行，另一個則是在承諾被拒絕時執行。</p>
+<h2 id="Controller:_FatherCtrl">Controller: FatherCtrl</h2>
+<p>爸爸控制情況在這:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// function somewhere in father-controller.js</span></div><div class="line">    <span class="keyword">var</span> makePromiseWithSon = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">        <span class="comment">// This service's function returns a promise, but we'll deal with that shortly</span></div><div class="line">        SonService.getWeather()</div><div class="line">            <span class="comment">// then() called when son gets back</span></div><div class="line">            .then(<span class="function"><span class="keyword">function</span><span class="params">(data)</span> </span>{</div><div class="line">                <span class="comment">// promise fulfilled</span></div><div class="line">                <span class="keyword">if</span> (data.forecast===<span class="string">'good'</span>) {</div><div class="line">                    prepareFishingTrip();</div><div class="line">                } <span class="keyword">else</span> {</div><div class="line">                    prepareSundayRoastDinner();</div><div class="line">                }</div><div class="line">            }, <span class="function"><span class="keyword">function</span><span class="params">(error)</span> </span>{</div><div class="line">                <span class="comment">// promise rejected, could log the error with: console.log('error', error);</span></div><div class="line">                prepareSundayRoastDinner();</div><div class="line">            });</div><div class="line">    };</div></pre></td></tr></table></figure>
+
+<h2 id="Service:_SonService">Service: SonService</h2>
+<p>兒子被當成一個服務(Service)，爬上山丘及試著預測天氣。當兒子利用望遠鏡來查看最接近的天氣時，我們假設他是透過類似天氣API，也就是說是非同步的動作，他將會得到一個變數答案，也有可能是個問題(例如，500 response，霧天)。</p>
+<p>從 Fishing Weather API 得到的 response 將會回傳給承諾(promise)，若有實現。他將會是這個格式: <strong>{“forecast”: “good”}</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">app.factory(<span class="string">'SonService'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($http, $q)</span> </span>{</div><div class="line">    <span class="keyword">return</span> {</div><div class="line">        getWeather: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">            <span class="comment">// the $http API is based on the deferred/promise APIs exposed by the $q service</span></div><div class="line">            <span class="comment">// so it returns a promise for us by default</span></div><div class="line">            <span class="keyword">return</span> $http.get(<span class="string">'http://fishing-weather-api.com/sunday/afternoon'</span>)</div><div class="line">                .then(<span class="function"><span class="keyword">function</span><span class="params">(response)</span> </span>{</div><div class="line">                    <span class="keyword">if</span> (<span class="keyword">typeof</span> response.data === <span class="string">'object'</span>) {</div><div class="line">                        <span class="keyword">return</span> response.data;</div><div class="line">                    } <span class="keyword">else</span> {</div><div class="line">                        <span class="comment">// invalid response</span></div><div class="line">                        <span class="keyword">return</span> $q.reject(response.data);</div><div class="line">                    }</div><div class="line"></div><div class="line">                }, <span class="function"><span class="keyword">function</span><span class="params">(response)</span> </span>{</div><div class="line">                    <span class="comment">// something went wrong</span></div><div class="line">                    <span class="keyword">return</span> $q.reject(response.data);</div><div class="line">                });</div><div class="line">        }</div><div class="line">    };</div><div class="line">});</div></pre></td></tr></table></figure>
+
+<hr>
+
+<h2 id="總結">總結</h2>
+<p>這個比喻展示了爸爸對兒子做出一個關於天氣預測的非同步要求。在兒子離開後爸爸不會在門旁等待答案，因為他還有其他事要做。反而，他在門前做了一個承諾(promise)，並且對三種不同的情況做出三種不同的結果(好天氣/壞天氣/沒預測)。兒子在離開時馬上做出承諾，並且在他回來時會<em>解決</em>或<em>拒絕</em>。</p>
+<p>兒子正在處理一個非同步的服務(利用望遠鏡查看天空/利用天氣API)來取得資料，但老人家肯定不懂這些新科技。</p>
+<p>原文: <a href="http://andyshora.com/promises-angularjs-explained-as-cartoon.html" target="_blank" rel="external">http://andyshora.com/promises-angularjs-explained-as-cartoon.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2014/07/08/2014-07-08-promises-in-angularjs/" data-id="2gwxrg1hlkz9he2e" class="article-share-link">Share</a>
+      
+        <a href="http://yoursite.com/2014/07/08/2014-07-08-promises-in-angularjs/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/05/13/2014-05-13-setup-svn-on-ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Setup SVN on Ubuntu</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AngularJS-Promise/">AngularJS Promise</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Javascript/">Javascript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/svn-ubuntu/">svn ubuntu</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unix-kernel-boot-message/">unix kernel boot-message</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">July 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">May 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04">April 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/07/08/2014-07-08-promises-in-angularjs/">Promises in AngularJS, Explained as a Cartoon(翻譯)</a>
+          </li>
+        
+          <li>
+            <a href="/2014/05/13/2014-05-13-setup-svn-on-ubuntu/">Setup SVN on Ubuntu</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/">[Unix HW] Add messages to kernel and show when booting</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/05/2014-04-05-truthy-and-falsy-when-all-is-not-equal-in-javascript/">Truthy and Falsy: When All is Not Equal in Javascript (翻譯)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2014 CYBAI<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'cybai';
+  
+  var disqus_url = 'http://yoursite.com/2014/07/08/2014-07-08-promises-in-angularjs/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
