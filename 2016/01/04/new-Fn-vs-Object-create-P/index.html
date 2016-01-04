@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>new Fn(...) vs. Object.create(P) | CYB&#39;s memo blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="這篇翻譯自 mraleph 的文章，順便當作是自己的memo
+V8裡物件設計的基礎
+在V8裡每個JavaScript物件長的都像這樣
+
+有些重要的事項要先紀錄在這裡:
+
+物件可以有0個物件內屬性空間(in-object property slots)並用字典來處理物件外屬性儲存空間(out-of-object property storage)。這是很普通且慢的一種JavaScript物件表現方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="new Fn(...) vs. Object.create(P)">
+<meta property="og:url" content="http://cybai.github.io/2016/01/04/new-Fn-vs-Object-create-P/">
+<meta property="og:site_name" content="CYB's memo blog">
+<meta property="og:description" content="這篇翻譯自 mraleph 的文章，順便當作是自己的memo
+V8裡物件設計的基礎
+在V8裡每個JavaScript物件長的都像這樣
+
+有些重要的事項要先紀錄在這裡:
+
+物件可以有0個物件內屬性空間(in-object property slots)並用字典來處理物件外屬性儲存空間(out-of-object property storage)。這是很普通且慢的一種JavaScript物件表現方式">
+<meta property="og:image" content="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-1.png">
+<meta property="og:image" content="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-2.png">
+<meta property="og:image" content="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-3.png">
+<meta property="og:image" content="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-4.png">
+<meta property="og:image" content="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-5.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="new Fn(...) vs. Object.create(P)">
+<meta name="twitter:description" content="這篇翻譯自 mraleph 的文章，順便當作是自己的memo
+V8裡物件設計的基礎
+在V8裡每個JavaScript物件長的都像這樣
+
+有些重要的事項要先紀錄在這裡:
+
+物件可以有0個物件內屬性空間(in-object property slots)並用字典來處理物件外屬性儲存空間(out-of-object property storage)。這是很普通且慢的一種JavaScript物件表現方式">
+
+  
+    <link rel="alternative" href="/atom.xml" title="CYB&#39;s memo blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">CYB&#39;s memo blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="submit" value="&#xF002;" class="search-form-submit"><input type="hidden" name="q" value="site:http://cybai.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-new-Fn-vs-Object-create-P" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/04/new-Fn-vs-Object-create-P/" class="article-date">
+  <time datetime="2016-01-04T08:15:57.000Z" itemprop="datePublished">Jan 4 2016</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      new Fn(...) vs. Object.create(P)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>這篇翻譯自 <a href="https://twitter.com/mraleph" target="_blank" rel="external">mraleph</a> 的<a href="http://mrale.ph/blog/2014/07/30/constructor-vs-objectcreate.html" target="_blank" rel="external">文章</a>，順便當作是自己的memo</p>
+<h2 id="V8裡物件設計的基礎">V8裡物件設計的基礎</h2>
+<p>在V8裡每個JavaScript物件長的都像這樣</p>
+<p><img src="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-1.png" alt="js object"></p>
+<p>有些重要的事項要先紀錄在這裡:</p>
+<ul>
+<li>物件可以有0個<code>物件內屬性空間(in-object property slots)</code>並用<strong>字典</strong>來處理<code>物件外屬性儲存空間(out-of-object property storage)</code>。這是很普通且慢的一種JavaScript物件表現方式(又稱為<code>字典模式</code>)。<em>快速模式</em>的JavaScript則有0個或以上的<code>物件內屬性空間</code>及利用<strong>陣列</strong>來處理物件外屬性儲存空間。</li>
+<li>越多屬性存在<code>物件內屬性空間</code>越好：他將減少間接存取這些屬性，也不會浪費記憶體空間來處理<code>物件外屬性儲存空間</code>的陣列標頭。</li>
+<li>一旦物件被配置後就<strong>不可能</strong>再增加<code>物件內屬性空間</code>屬性的數量。若程式持續加屬性到一個已經沒有<code>物件內屬性空間</code>的物件，則新增的屬性將會被動態的加到<code>物件外屬性儲存空間</code> ー 當然，動態增加也消耗很大。這就是為什麽有個好的關於估算一個物件將總共擁有多少屬性的方法非常重要。</li>
+<li>隱藏類別(Hidden Class)(又稱為 map)完全描繪了物件的樣板：該物件多大，有哪些屬性，有多少物件內屬性空間已經使用及已使用在哪(對於快速模式的物件)等等。隱藏類別基本上無法變更，每次有新屬性加到該物件時，該物件就會換到新的隱藏類別。</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="範例">範例</h3>
+<p>讓我們想像一下「如果V8決定給一個物件字面值1個物件內屬性空間然後我們加了三個屬性到該物件」會發生什麽事。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj = {};</div><div class="line">obj.x = <span class="number">0</span>;</div><div class="line">obj.y = <span class="number">1</span>;</div><div class="line">obj.z = <span class="number">2</span>;</div></pre></td></tr></table></figure>
+
+<p>堆疊中物件的演變將運作如下:</p>
+<ol>
+<li><p>一開始他會是空的，並有一個”空”的隱藏類別</p>
+<p><img src="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-2.png" alt="first step"></p>
+</li>
+<li><p>一旦我們加了x後隱藏類別就會換至新隱藏類別，也就是說該物件包含屬性存在第一個物件內屬性空間且他的值存在該空間裡。</p>
+<p><img src="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-3.png" alt="second step"></p>
+</li>
+<li><p>當我們試著加y時，已經沒有空間在物件裡，所以V8將配置一個陣列給物件外屬性並儲存y的值在裡面。隱藏類別將再換一次，並映射至新隱藏類別。</p>
+<p><img src="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-4.png" alt="third step"></p>
+<p> 注意V8會多配置點物件外屬性儲存空間，因為他預期會有更多屬性(一次增加一個屬性到該儲存空間將會花平方複雜度且產生垃圾)</p>
+</li>
+<li><p>當我們試著加z時，物件裡面還是沒有空間，但在物件外儲存空間有足夠的空間，所以V8會使用他</p>
+<p><img src="/images/post-images/new-fn-vs-object-create/new-fn-vs-obj-create-5.png" alt="fourth step"></p>
+<p>這個範例再次描繪出為何透過在物件配置前估算物件內屬性空間的數量來達成將所有屬性加至物件最有效的表現是非常重要的。</p>
+<p>註記: 如果我們再次執行同一段程式碼，將<strong>沒有</strong>新隱藏類別會被配置，最後我們會使用同一個隱藏類別。這是一個很重要的不變條件，V8中許多優化都以此為中心。</p>
+</li>
+</ol>
+<h2 id="估算預期的屬性數量">估算預期的屬性數量</h2>
+<p>當我們透過建構子<code>new Fn(...)</code>來配置第一個物件時，V8必須替建構子創造一個<em>初始隱藏類別</em>: 在運作建構子執行任何陳述式前，這將會是建構體最剛開始時物件的隱藏類別。當V8配置初始隱藏類別時，他必須決定要使用多少物件內屬性空間來保存屬性在物件裡，而且就像上面註記的，一旦配置後就沒辦法再給他更多物件內屬性空間(詳細後面會再說)。</p>
+<p>V8在這裡做了什麽:他會走遍<code>Fn</code>建構子來查看<code>this.x</code>形式的指定(assignment)，算有幾個指定並利用這個數字加上一些多餘空間來當作該物件屬性預期的數字。</p>
+<p>樂觀的來看，不浪費記憶體來增加多餘空間是可能的，因為V8也做一些運行時效能分析(runtime profiling)，稱作<em>物件內多餘空間追蹤(in-object slack tracking)</em> ー 運行時在一定數量的配置被配置後，將查看最大數量已使用的物件內屬性空間然後減少保留的空間數量至與多餘空間相符。因為小心挑選將值在運行時配置時放到未使用的物件內屬性空間，V8能夠藉由重寫儲存在各個隱藏類別的實體大小來縮小屬於同個轉換樹(transition tree)的所有已配置實體，且物件本身不須要被修正。</p>
+<h2 id="new_Fn(…)_vs-_Object-create(P)">new Fn(…) vs. Object.create(P)</h2>
+<p>現在我們已經準備深入為什麽使用建構子的效能會比 <code>Object.create</code> 語法的效能好。</p>
+<p>如果我們從Kyle的benchmark來調校<code>new Fn(...)</code>方法，我們將看到大多時間會花在已生成的code。然而從<code>Object.create(P)</code>的資料透露出V8運行時系統的兩個熱點負責整個執行時間的80% ー SharedStoreIC_ExtendStorage (50%) 及 Runtime_SetPrototype (30%)。</p>
+<h3 id="SharedStoreIC_ExtendStorage"><code>SharedStoreIC_ExtendStorage</code></h3>
+<p>如上面所解釋，V8負責估算預留物件內屬性空間數量的啟發式演算法以建構子為中心且不包括基本上實作起來像這樣的<code>Object.create(P)</code>:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">Object</span>.create = <span class="function"><span class="keyword">function</span> <span class="params">(P)</span> </span>{</div><div class="line">  <span class="keyword">return</span> { __proto__: P };</div><div class="line">};</div></pre></td></tr></table></figure>
+
+<p>導致誤見得到相同數量的物件內屬性空間，任何其他被配置的物件透過空的物件字面值將得到0 ー 在此範例中明顯不足，他將迫使V8增加物件外屬性儲存空間來讓新屬性被增加。</p>
+<h3 id="Runtime_SetPrototype"><code>Runtime_SetPrototype</code></h3>
+<p>現在在V8設定一個物件的原型(prototype)需要進入運行時系統(runtime system)並在運行時系統中為一個物件找到一個新的適當的隱藏類別然後將一個物件轉換成他。</p>
+<h2 id="Q&amp;A">Q&amp;A</h2>
+<h3 id="V8能夠做什麽事來改善Object-create(P)的效能?">V8能夠做什麽事來改善<code>Object.create(P)</code>的效能?</h3>
+<p>一定是可以的。有兩件事能夠被增進:</p>
+<ol>
+<li>一般屬性儲存不需要在運行時(runtime) (即使他們將導致換新隱藏類別)。在相似的方式下，能夠透過使用<code>__proto__</code>儲存避免總是進入運行時來改善效能。</li>
+<li><code>Object.create</code>應該以類似建構子的方式對待。我們只必須了解有固定P的 <code>{ __proto__: P }</code> 的隱藏類別基本上就像建構子的初始map。意思是我們可以先多配置物件內屬性空間，然後依賴多餘空間追蹤來替我們縮小物件(雖然他當然需要將多餘空間追蹤概念化)。</li>
+</ol>
+<h3 id="為什麽在些許配滯後不換至”較大的”隱藏類別">為什麽在些許配滯後不換至”較大的”隱藏類別</h3>
+<p>多型(Polymorphism)是V8選擇縮小物件而不是當他發現一開始時給不足物件內屬性空間時便開始配置較大的物件的主因。</p>
+<p>如上面所敘述的，我們沒辦法在物件被配置後將他變大，也代表VM沒辦法僅僅重寫轉換樹(transition tree)及增加一些數量至儲存在每個隱藏類別的實體大小。</p>
+<p>反而，唯一的可能是重複轉換樹(transition tree)，增加儲存在裡面的大小，然後轉換建構子的初始map指向新的那個。</p>
+<p>然而，在這個地方，建構子將開始產生帶有新隱藏類別的物件，這也將多型轉換所有的位置看到舊有的已建構物件及新的已建構物件。</p>
+<p>這裡一定有辦法避免此多型，但沒有一個方法是簡單或是無缺點的。例如，你可能會介紹一個主張是沒被紀錄在IC(inline caching及在GC(當GC是唯一的運行時能夠轉換及增長物件時)時被尚未棄用的部份所取代的<em>棄用的</em>隱藏類別。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://cybai.github.io/2016/01/04/new-Fn-vs-Object-create-P/" data-id="niiqr71swd6usk2z" class="article-share-link">Share</a>
+      
+        <a href="http://cybai.github.io/2016/01/04/new-Fn-vs-Object-create-P/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/v8/">v8</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/12/22/Manage-env-with-anyenv/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Manage **env with anyenv</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AngularJS/">AngularJS</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Promise/">Promise</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/anyenv/">anyenv</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/boot-message/">boot-message</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/">kernel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/svn/">svn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu/">ubuntu</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unix/">unix</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/v8/">v8</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AngularJS/" style="font-size: 10.00px;">AngularJS</a><a href="/tags/JavaScript/" style="font-size: 20.00px;">JavaScript</a><a href="/tags/Promise/" style="font-size: 10.00px;">Promise</a><a href="/tags/anyenv/" style="font-size: 10.00px;">anyenv</a><a href="/tags/boot-message/" style="font-size: 10.00px;">boot-message</a><a href="/tags/kernel/" style="font-size: 10.00px;">kernel</a><a href="/tags/svn/" style="font-size: 10.00px;">svn</a><a href="/tags/ubuntu/" style="font-size: 10.00px;">ubuntu</a><a href="/tags/unix/" style="font-size: 10.00px;">unix</a><a href="/tags/v8/" style="font-size: 10.00px;">v8</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/01/04/new-Fn-vs-Object-create-P/">new Fn(...) vs. Object.create(P)</a>
+          </li>
+        
+          <li>
+            <a href="/2014/12/22/Manage-env-with-anyenv/">Manage **env with anyenv</a>
+          </li>
+        
+          <li>
+            <a href="/2014/07/08/2014-07-08-promises-in-angularjs/">Promises in AngularJS, Explained as a Cartoon(翻譯)</a>
+          </li>
+        
+          <li>
+            <a href="/2014/05/13/2014-05-13-setup-svn-on-ubuntu/">Setup SVN on Ubuntu</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/11/2014-04-11-unix-hw-add-messages-to-kernel-and-show-when-booting/">[Unix HW] Add messages to kernel and show when booting</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 CYBAI<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'cybai';
+  
+  var disqus_url = 'http://cybai.github.io/2016/01/04/new-Fn-vs-Object-create-P/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
